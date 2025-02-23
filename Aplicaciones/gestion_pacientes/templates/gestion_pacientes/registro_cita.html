@@ -1,0 +1,194 @@
+{% extends "plantilla_registro_cita.html" %}
+{% load static %}
+{% block title %}
+GESTIÓN PACIENTES
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Registrar Historia Clínica</h2>
+    <br>
+    <form id="form_historia_clinica" method="POST">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Información General de la Atención</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Paciente:</strong> {{ paciente.nombres_pacientes }} {{ paciente.apellido_paterno_pacientes }}
+                    {{ paciente.apellido_materno_pacientes }}</p>
+                <p><strong>Cédula:</strong> {{ paciente.cedula_pacientes }}</p>
+                <p><strong>Fecha de la Atención:</strong> {{ cita.fecha_cita }}</p>
+                <p><strong>Hora de la Atención:</strong> {{ cita.hora_cita }}</p>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Atención Médica</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="fecha_atencion_historial">Fecha de Atención</label>
+                    <input type="date" class="form-control" id="fecha_atencion_historial"
+                        name="fecha_atencion_historial" placeholder="Seleccione la fecha de atención" value="{{ cita.fecha_cita|date:'Y-m-d' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="hora_atencion_historial">Hora de Atención</label>
+                    <input type="time" class="form-control" id="hora_atencion_historial" name="hora_atencion_historial"
+                        placeholder="Seleccione la hora de atención" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Signos Vitales</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="presion_arterial_historial">Presión Arterial</label>
+                    <input type="text" class="form-control" id="presion_arterial_historial"
+                        name="presion_arterial_historial" placeholder="Ej. 120/80" required>
+                </div>
+                <div class="form-group">
+                    <label for="temperatura_historial">Temperatura (°C)</label>
+                    <input type="number" class="form-control" id="temperatura_historial" name="temperatura_historial"
+                        placeholder="Ej. 36.5" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="saturacion_oxigeno_historial">Saturación de Oxígeno (%)</label>
+                    <input type="number" class="form-control" id="saturacion_oxigeno_historial"
+                        name="saturacion_oxigeno_historial" placeholder="Ej. 98" required>
+                </div>
+                <div class="form-group">
+                    <label for="frecuencia_respiratoria_historial">Frecuencia Respiratoria</label>
+                    <input type="number" class="form-control" id="frecuencia_respiratoria_historial"
+                        name="frecuencia_respiratoria_historial" placeholder="Ej. 16" required>
+                </div>
+                <div class="form-group">
+                    <label for="peso_historial">Peso (kg)</label>
+                    <input type="number" class="form-control" id="peso_historial" name="peso_historial"
+                        placeholder="Ej. 70" required>
+                </div>
+                <div class="form-group">
+                    <label for="talla_historial">Talla (cm)</label>
+                    <input type="number" class="form-control" id="talla_historial" name="talla_historial"
+                        placeholder="Ej. 170" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Síntomas</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="nombre_sintoma_historial">Nombre del Síntoma</label>
+                    <input type="text" class="form-control" id="nombre_sintoma_historial"
+                        name="nombre_sintoma_historial" placeholder="Ej. Dolor de cabeza" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion_sintoma_historial">Descripción del Síntoma</label>
+                    <textarea class="form-control" id="descripcion_sintoma_historial"
+                        name="descripcion_sintoma_historial" rows="3" placeholder="Describa el síntoma..."
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="gravedad_sintoma_historial">Gravedad</label>
+                    <select class="form-control" id="gravedad_sintoma_historial" name="gravedad_sintoma_historial"
+                        required>
+                        <option value="Leve">Leve</option>
+                        <option value="Moderado">Moderado</option>
+                        <option value="Grave">Grave</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inicio_sintoma_historial">Inicio del Síntoma</label>
+                    <input type="date" class="form-control" id="inicio_sintoma_historial"
+                        name="inicio_sintoma_historial" placeholder="Seleccione la fecha de inicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="duracion_sintoma_historial">Duración del Síntoma (días)</label>
+                    <input type="text" class="form-control" id="duracion_sintoma_historial"
+                        name="duracion_sintoma_historial" placeholder="Ej. 3" required>
+                </div>
+                <div class="form-group">
+                    <label for="frecuecia_sintoma_historial">Frecuencia del Síntoma</label>
+                    <input type="text" class="form-control" id="frecuecia_sintoma_historial"
+                        name="frecuecia_sintoma_historial" placeholder="Ej. 2 veces al día" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo_sintoma_historial">Tipo de Síntoma</label>
+                    <input type="text" class="form-control" id="tipo_sintoma_historial" name="tipo_sintoma_historial"
+                        placeholder="Ej. Dolor agudo" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Diagnóstico</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="nombre_diagnostico_historial">Nombre del Diagnóstico</label>
+                    <input type="text" class="form-control" id="nombre_diagnostico_historial"
+                        name="nombre_diagnostico_historial" placeholder="Ej. Gripe" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion_diagnostico_historial">Descripción</label>
+                    <textarea class="form-control" id="descripcion_diagnostico_historial"
+                        name="descripcion_diagnostico_historial" rows="3" placeholder="Descripción del diagnóstico"
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cie10_diagnostico_historial">CIE-10</label>
+                    <input type="text" class="form-control" id="cie10_diagnostico_historial"
+                        name="cie10_diagnostico_historial" placeholder="Código CIE-10" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;"><b>Tratamiento</b></h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="medicamento_tratamiento_historial">Medicamento</label>
+                    <input type="text" class="form-control" id="medicamento_tratamiento_historial"
+                        name="medicamento_tratamiento_historial" placeholder="Ej. Paracetamol" required>
+                </div>
+                <div class="form-group">
+                    <label for="instrucciones_tratamiento_historial">Instrucciones</label>
+                    <textarea class="form-control" id="instrucciones_tratamiento_historial"
+                        name="instrucciones_tratamiento_historial" rows="3"
+                        placeholder="Instrucciones para el medicamento" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_inicio_tratamiento_historial">Fecha de Inicio</label>
+                    <input type="date" class="form-control" id="fecha_inicio_tratamiento_historial"
+                        name="fecha_inicio_tratamiento_historial" placeholder="Seleccione la fecha de inicio" value="{{ cita.fecha_cita|date:'Y-m-d' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_fin_tratamiento_historial">Fecha de Fin</label>
+                    <input type="date" class="form-control" id="fecha_fin_tratamiento_historial"
+                        name="fecha_fin_tratamiento_historial" placeholder="Seleccione la fecha de fin" required>
+                </div>
+                <div class="form-group">
+                    <label for="observaciones_tratamiento_historial">Observaciones</label>
+                    <textarea class="form-control" id="observaciones_tratamiento_historial"
+                        name="observaciones_tratamiento_historial" rows="3"
+                        placeholder="Observaciones adicionales"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success mt-4">Guardar Historia Clínica</button>
+        </div>
+    </form>
+
+    <br> <br>
+</div>
+{% endblock %}

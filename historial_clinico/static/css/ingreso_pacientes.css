@@ -1,0 +1,13 @@
+.badge-success {
+    background-color: #28a745;
+    color: white;
+    padding: 0.2em 0.6em;
+    border-radius: 0.2em;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+        padding: 0.2em 0.6em;
+        border-radius: 0.2em;
+    }

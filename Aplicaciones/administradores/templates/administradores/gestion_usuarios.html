@@ -1,0 +1,357 @@
+{% extends "plantillaadministradores.html" %}
+{% load static %}
+{% block title %}
+GESTIÓN USUARIOS
+{% endblock %}
+{% block content %}
+<h1 class="text text-center">Gestión de Usuarios</h1>
+
+<style>
+    #tabla_usuarios {
+        margin: 0 auto;
+        width: 100% !important;
+    }
+
+    .card {
+        margin-top: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }    
+
+
+    .badge-activo {
+        background-color: #28a745;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .badge-inactivo {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+</style>
+<!-- Contenedor para centrar la tabla -->
+<div style="margin-left: 2%;" class="container-fluid">
+    <div class="rowjustify-content-center">
+        <div class="col-md-11">
+            <div class="text-end mb-3">
+                <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addIngresoUsuariosModal"><i
+                        class="bi bi-person-plus-fill"></i> Nuevo Usuario</a>
+            </div>
+            <div class="card" style="width: fit-content;">
+                <div class="card-body" style="width: auto;">
+                    <div class="table-responsive" style="color: #FB5293;"> <!--AQUI PUSE COLOR PARA EL TEXTO-->
+                        <table id="tabla_usuarios" class="table table-striped mx-auto">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Nombre de Usuario</th>
+                                    <th>Tipo de Usuario</th>
+                                    <th>Estado</th>
+                                    <th style="display: none;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuarioTemporal in usuarios %}
+                                <!-- Aquí van los datos de la tabla, ya sea de la base de datos o en forma estática -->
+                                <tr>
+
+                                    <td>
+                                        {% if usuarioTemporal.image %}
+                                        <img src="{{ usuarioTemporal.image.url }}" alt="Imagen de perfil"
+                                            style="width: 50px; height: 50px; border-radius: 50%;">
+                                        {% else %}
+                                        <img src="{% static 'images/default-avatar.png' %}"
+                                            alt="Imagen de perfil predeterminada"
+                                            style="width: 50px; height: 50px; border-radius: 50%;">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ usuarioTemporal.first_name}}</td>
+                                    <td>{{ usuarioTemporal.last_name }}</td>
+                                    <td>{{ usuarioTemporal.username}}</td>
+                                    <td>{{ usuarioTemporal.tipo_usuario|upper }}</td>
+                                    <td>
+                                        <span
+                                            class="badge {% if usuarioTemporal.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                            {% if usuarioTemporal.is_active %}ACTIVO{% else %}INACTIVO{% endif %}
+                                        </span>
+                                    </td>
+
+                                    <!-- Columna de imagen -->
+
+                                    <td>
+                                        <div class="d-flex">
+                                            <a href="#" style="margin-right: 10px;"
+                                                class="btn btn-primary btn-sm view-btn"
+                                                data-id="{{ usuarioTemporal.id }}" data-bs-toggle="modal"
+                                                data-bs-target="#verUsuarioModal">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" style="margin-right: 10px;"
+                                                class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal"
+                                                data-bs-target="#editIngresoUsuariosModal"
+                                                data-id="{{ usuarioTemporal.id }}"><i class="bi bi-pencil-fill"></i></a>
+                                            <!-- <a href="#" class="btn btn-sm btn-danger btn-delete"
+                                                data-id="{{ usuarioTemporal.id }}"><i class="bi bi-trash-fill"></i></a> -->
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+                                <!-- Más filas aquí... -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal para agregar un nuevo usuario -->
+<div class="modal fade" id="addIngresoUsuariosModal" tabindex="-1" aria-labelledby="addIngresoUsuariosLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addIngresoUsuariosLabel">Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario para agregar un usuario -->
+                <form id="formAddUsuario" method="POST" action="{% url 'administradores:agregar_usuario' %}"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <!-- Nombre -->
+                        <b><label for="first_name" class="form-label">Nombre: </label></b>
+                        <input type="text" class="form-control" id="first_name" name="first_name"
+                            placeholder="Escriba el nombre del usuario (Ej.: Juan)" required>
+                        <!-- Apellido -->
+                        <b><label for="last_name" class="form-label">Apellido: </label></b>
+                        <input type="text" class="form-control" id="last_name" name="last_name"
+                            placeholder="Escriba el apellido del usuario (Ej.: Ramirez)" required>
+                        <!-- Nombre de Usuario -->
+                        <b><label for="username" class="form-label">Nombre de usuario: </label></b>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Escriba el nickname usuario (Ej.: juanram3)" required>
+                        <!-- Tipo de Usuario -->
+                        <div class="mb-3">
+                            <b><label for="tipo_usuario" class="form-label">Tipo de Usuario:</label></b>
+                            <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+                                <option value="" disabled selected>Seleccione un tipo</option>
+                                <option value="admisionista">ADMISIONISTA</option>
+                                <option value="doctor">DOCTOR</option>
+                                <option value="administrador">ADMINISTRADOR</option>
+                            </select>
+                        </div>
+                        <!-- Especialidad -->
+                        <div class="mb-3">
+                            <b><label for="especialidad" class="form-label">Especialidad:</label></b>
+                            <select class="form-select" id="especialidad" name="especialidad" required>
+                                <option value="" disabled selected>Seleccione una especialidad</option>
+                                <option value="admisionista">ADMISIONISTA</option>
+                                <option value="medico_general">MÉDICO GENERAL</option>
+                                <option value="administrador">ADMINISTRADOR</option>
+                            </select>
+                        </div>
+                        <!-- Email -->
+                        <b><label for="email" class="form-label">Email: </label></b>
+                        <input type="email" class="form-control" id="email" name="email"
+                            placeholder="Escriba el email del usuario (Ej.: juanram3@gmail.com)" required>
+                        <!-- Contraseña -->
+                        <b><label for="password" class="form-label">Contraseña: </label></b>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Escriba una contraseña segura" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">Mostrar</button>
+                        </div>
+                        <!-- PREVISUALIZAR Imagen -->                                                
+                        
+                            <b><label class="form-label">Imagen de Perfil:</label></b>
+                            <img id="image" class="form-control" style="width: 150px; height: 150px;" src="" alt="Imagen de perfil actual">                                                        
+                            <input type="file" class="form-control" id="image_input" name="image" accept="image/*" required>                            
+                        
+                    </div>
+                    <button type="submit" class="btn btn-success">Guardar Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles del usuario -->
+<div class="modal fade" id="verUsuarioModal" tabindex="-1" aria-labelledby="verUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verUsuarioModalLabel">Detalles del Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img id="ver_imagen" src="" alt="Imagen de perfil" class="rounded-circle"
+                        style="width: 150px; height: 150px; object-fit: cover;">
+                </div>
+
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Nombre:</strong></label>
+                            <p id="ver_first_name"></p>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Apellido:</strong></label>
+                            <p id="ver_last_name"></p>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Usuario:</strong></label>
+                            <p id="ver_username"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Tipo de Usuario:</strong></label>
+                            <p id="ver_tipo_usuario"></p>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Especialidad :</strong></label>
+                            <p id="ver_especialidad"></p>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Estado:</strong></label>
+                            <br>
+                            <span id="ver_is_active" class="badge"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Fecha y hora de Registro:</strong></label>
+                            <p id="ver_date_joined"></p>
+                        </div>
+                        <div class="col sm">
+                            <label class="form-label"><strong>Último Logueo:</strong></label>
+                            <p id="ver_last_login"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-sm">
+                            <label class="form-label"><strong>Email:</strong></label>
+                            <p id="ver_email"></p>
+                        </div>                                                
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para actualizar un usuarioo -->
+<div class="modal fade" id="editIngresoUsuariosModal" tabindex="-1" aria-labelledby="editIngresoUsuariosLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editIngresoUsuariosLabel">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario para agregar un usuario -->
+                <form id="formEditUsuario" method="POST" action=""
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <!-- Nombre -->
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <input type="hidden" name="id" id="edit_usuarioId"> <!-- Campo oculto para ID -->
+                        <b><label for="edit_first_name" class="form-label">Nombre: </label></b>
+                        <input type="text" class="form-control" id="edit_first_name" name="first_name"
+                            placeholder="Escriba el nombre del usuario (Ej.: Juan)" required>
+                        <!-- Apellido -->
+                        <b><label for="edit_last_name" class="form-label">Apellido: </label></b>
+                        <input type="text" class="form-control" id="edit_last_name" name="last_name"
+                            placeholder="Escriba el apellido del usuario (Ej.: Ramirez)" required>
+                        <!-- Nombre de Usuario -->
+                        <b><label for="edit_username" class="form-label">Nombre de usuario: </label></b>
+                        <input type="text" class="form-control" id="edit_username" name="username"
+                            placeholder="Escriba el nickname usuario (Ej.: juanram3)" required>
+                        <!-- Tipo de Usuario -->
+                        <div class="mb-3">
+                            <b><label for="edit_tipo_usuario" class="form-label">Tipo de Usuario:</label></b>
+                            <select class="form-select" id="edit_tipo_usuario" name="tipo_usuario" required>
+                                <option value="" disabled selected>Seleccione un tipo</option>
+                                <option value="admisionista"{% if usuario.tipo_usuario == 'admisionista' %}selected{% endif %}>ADMISIONISTA</option>
+                                <option value="doctor"{% if usuario.tipo_usuario == 'doctor' %}selected{% endif %}>DOCTOR</option>
+                                <option value="administrador"{% if usuario.tipo_usuario == 'administrador' %}selected{% endif %}>ADMINISTRADOR</option>                                                                                                
+                            </select>
+                        </div>
+                        <!-- Especialidad -->
+                        <div class="mb-3">
+                            <b><label for="edit_especialidad" class="form-label">Especialidad:</label></b>
+                            <select class="form-select" id="edit_especialidad" name="especialidad" required>
+                                <option value="" disabled selected>Seleccione una especialidad</option>                                
+                                <option value="admisionista"{% if usuario.especialidad == 'admisionista' %}selected{% endif %}>ADMISIONISTA</option>
+                                <option value="medico_general"{% if usuario.especialidad == 'medico_general' %}selected{% endif %}>MÉDICO GENERAL</option>
+                                <option value="administrador"{% if usuario.especialidad == 'administrador' %}selected{% endif %}>ADMINISTRADOR</option>                                                                
+                            </select>
+                        </div>
+                        <div class="mb-3">                            
+                                <b><label for="edit_is_active_usuarios_select" class="form-label">Estado</label></b>
+                                <select class="form-select" id="edit_is_active_usuarios_select" name="is_active">
+                                    <option value="" disabled>Seleccione una opción</option>
+                                    <option value="true" {% if usuario.is_active %}selected{% endif %}>ACTIVO</option>
+                                    <option value="false" {% if not usuario.is_active %}selected{% endif %}>INACTIVO</option>
+                                </select>                                                                                        
+                        </div>  
+                        <!-- Email -->
+                        <b><label for="edit_email" class="form-label">Email: </label></b>
+                        <input type="email" class="form-control" id="edit_email" name="email"
+                            placeholder="Escriba el email del usuario (Ej.: juanram3@gmail.com)" required>
+                        <!-- Contraseña -->
+                        <b><label for="edit_password" class="form-label">Contraseña: </label></b>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" id="edit_password" name="password"
+                                placeholder="Escriba una nueva contraseña (deja vacio si no la vas a cambiar)">                                                        
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">Mostrar</button>                            
+                        </div>
+                        <small class="text-muted">Deja este campo vacío si no deseas cambiar la contraseña</small>                        
+                        <br><br>
+                        <div>
+                            <b><label>Imagen de Perfil Actual:</label></b>
+                            <img id="edit_image" class="form-control" style="width: 150px; height: 150px;" src="" alt="Imagen de perfil actual">                            
+                            <b><label>Cambiar imagen:</label></b>
+                            <input type="file" class="form-control" id="edit_image_input" name="image" accept="image/*">
+                            <small class="text-muted">Deja este campo vacío si no deseas cambiar la imagen</small>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Guardar Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br><br><br><br><br>
+
+
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/welcome.css' %}">  <!-- Incluye el archivo CSS -->
+    <title>Bienvenido</title>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Centro Médico Renacer</h1>
+        <h2>Bienvenido, {{ user.username }}!</h2>
+        <p>Redirigiéndote a tu Panel...</p>
+    </div>
+    <script>
+        // Redirigir automáticamente después de un breve retraso
+        setTimeout(function() {
+            window.location.href = "{% url redirect_url %}";  // Usa la URL pasada desde la vista
+        }, 3000);  // 2 segundos de retraso
+    </script>
+</body>
+</html>

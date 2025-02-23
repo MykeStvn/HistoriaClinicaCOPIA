@@ -1,0 +1,26 @@
+{% extends "plantilla.html" %}
+{% load static %}
+{% block title %}
+GESTIÓN PACIENTES
+{% endblock %}
+
+{% block content %}
+    <table id="tabla_citas" class="table table-striped">
+        <thead>
+            <tr class="text-center">
+                <th>APELLIDO PATERNO</th>
+                <th>APELLIDO MATERNO</th>
+                <th>NOMBRES</th>
+                <th>CÉDULA</th>
+                <th>FECHA ASIGNACIÓN</th>
+                <th>HORA ASIGNACIÓN</th>
+                <th>ESTADO</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--cargo con AJAX-->
+        </tbody>
+    </table>
+
+{% endblock %}

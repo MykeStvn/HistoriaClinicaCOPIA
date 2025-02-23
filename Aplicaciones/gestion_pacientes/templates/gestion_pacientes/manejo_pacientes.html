@@ -1,0 +1,231 @@
+{% extends "plantilladoctores.html" %}
+{% load static %}
+{% block title %}
+GESTIÓN PACIENTES
+{% endblock %}
+{% block content %}
+    <h1 class="text text-center">Manejo de Pacientes DOCTOR</h1>
+    <br>
+    <div class="text-end">
+        <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addIngresoPacientesModal"><i class="bi bi-person-plus-fill"></i>  Nuevo Paciente</a>
+    </div>
+    <div class="table-responsive">
+        <table id="tabla_pacientes" class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="display: none;">ID (oculto)</th> <!-- Columna oculta -->
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Nombres</th>
+                    <th>Cédula</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Edad</th>
+                    <th>Dirección</th>
+                    <th>Email</th>
+                    <th>Género</th>
+                    <th>Teléfono</th>
+                    <th>En caso de emergencia informar a</th>
+                    <th>Contacto de emergencia</th>
+                    <th>Seguro Médico</th>
+                    <th>Admisionista</th>                    
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pacienteTemporal in pacientes %}
+                <!-- Aquí van los datos de la tabla, ya sea de la base de datos o en forma estática -->
+                <tr>
+                    <td style="display:none;">{{ pacienteTemporal.id_pacientes }}</td> <!-- Aquí se incluye el id oculto -->
+                    <td>{{ pacienteTemporal.apellido_paterno_pacientes}}</td>
+                    <td>{{ pacienteTemporal.apellido_materno_pacientes}}</td>
+                    <td>{{ pacienteTemporal.nombres_pacientes}}</td>
+                    <td>{{ pacienteTemporal.cedula_pacientes}}</td>
+                    <td>{{ pacienteTemporal.fecha_nacimiento_pacientes}}</td>
+                    <td>{{ pacienteTemporal.edad }}</td>
+                    <td>{{ pacienteTemporal.direccion_pacientes}}</td>
+                    <td>{{ pacienteTemporal.email_pacientes}}</td>
+                    <td>{{ pacienteTemporal.genero_pacientes}}</td>
+                    <td>{{ pacienteTemporal.telefono_pacientes}}</td>
+                    <td>{{ pacienteTemporal.emergencia_informar_pacientes}}</td>
+                    <td>{{ pacienteTemporal.contacto_emergencia_pacientes}}</td>
+                    <td>{{ pacienteTemporal.seguro_pacientes}}</td>
+                    <td>{{ pacienteTemporal.fk_id_admisionista.username}}</td>                    
+                    <td>
+                        <a href="#" class="btn-sm rounded-pill btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#editIngresoPacientesModal" data-id="{{ pacienteTemporal.id_pacientes }}">Editar</a>
+                        <a href="#" class="btn-sm rounded-pill btn-danger btn-delete" data-id="{{ pacienteTemporal.id_pacientes }}">Eliminar</a>                    
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- Más filas aquí... -->
+            </tbody>
+        </table>
+    </div>
+    <!-- Modal para agregar un nuevo paciente -->
+    <div class="modal fade" id="addIngresoPacientesModal" tabindex="-1" aria-labelledby="addIngresoPacientesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIngresoPacientesLabel">Nuevo Paciente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario para agregar un paciente -->
+                    <form id="formAddPaciente" method="POST" action="{% url 'admisionistas:agregar_paciente' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="apellido_paterno_pacientes" class="form-label">Apellido Paterno</label>
+                            <input type="text" class="form-control" id="apellido_paterno_pacientes" name="apellido_paterno_pacientes" required>
+
+                            <label for="apellido_materno_pacientes" class="form-label">Apellido Materno</label>
+                            <input type="text" class="form-control" id="apellido_materno_pacientes" name="apellido_materno_pacientes" required>
+
+                            <label for="nombres_pacientes" class="form-label">Nombres</label>
+                            <input type="text" class="form-control" id="nombres_pacientes" name="nombres_pacientes" required>
+
+                            <label for="cedula_pacientes" class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="cedula_pacientes" name="cedula_pacientes" required>
+
+                            <label for="fecha_nacimiento_pacientes" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento_pacientes" name="fecha_nacimiento_pacientes" required>
+
+                            <label for="direccion_pacientes" class="form-label">Dirección</label>
+                            <textarea class="form-control" id="direccion_pacientes" name="direccion_pacientes" required rows="3" style="resize: none;"></textarea>
+
+                            <label for="email_pacientes" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email_pacientes" name="email_pacientes" required>
+
+                            <div class="mb-3">
+                                <label for="genero_pacientes" class="form-label">Género</label>
+                                <select class="form-select" id="genero_pacientes_select" name="genero_pacientes" required onchange="toggleGeneroInput(this.value)">
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="genero_otro_div" style="display: none;">
+                                <label for="genero_otro" class="form-label">Especifique el género</label>
+                                <input type="text" class="form-control" id="genero_otro" name="genero_otro">
+                            </div>
+
+                            <label for="telefono_pacientes" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono_pacientes" name="telefono_pacientes" required>
+
+                            <label for="emergencia_informar_pacientes" class="form-label">En caso de emergencia informar a</label>
+                            <input type="text" class="form-control" id="emergencia_informar_pacientes" name="emergencia_informar_pacientes" required>
+
+                            <label for="contacto_emergencia_pacientes" class="form-label">Contacto de emergencia</label>
+                            <input type="text" class="form-control" id="contacto_emergencia_pacientes" name="contacto_emergencia_pacientes" required>
+
+                            <div class="mb-3">
+                                <label for="seguro_pacientes" class="form-label">Seguro médico</label>
+                                <select class="form-select" id="seguro_pacientes_select" name="seguro_pacientes" required onchange="toggleSeguroInput(this.value)">
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    <option value="IESS">IESS</option>
+                                    <option value="ISSPOL">ISSPOL</option>
+                                    <option value="ISSFA">ISSFA</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="seguro_otro_div" style="display: none;">
+                                <label for="seguro_otro" class="form-label">Especifique el seguro</label>
+                                <input type="text" class="form-control" id="seguro_otro" name="seguro_otro">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="fk_id_admisionista" class="form-label">Admisionista</label>
+                                <input type="text" class="form-control" id="fk_id_admisionista" name="fk_id_admisionista" value="{{ user.username }}" readonly>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para editar un paciente -->
+    <div class="modal fade" id="editIngresoPacientesModal" tabindex="-1" aria-labelledby="editIngresoPacientesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editIngresoPacientesLabel">Editar Paciente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditPaciente" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <input type="hidden" name="id_pacientes" id="edit_pacienteId"> <!-- Campo oculto para ID -->
+
+                        <label for="edit_apellido_paterno_pacientes" class="form-label">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="edit_apellido_paterno_pacientes" name="apellido_paterno_pacientes" required>
+
+                        <label for="edit_apellido_materno_pacientes" class="form-label">Apellido Materno</label>
+                        <input type="text" class="form-control" id="edit_apellido_materno_pacientes" name="apellido_materno_pacientes" required>
+
+                        <label for="edit_nombres_pacientes" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="edit_nombres_pacientes" name="nombres_pacientes" required>
+
+                        <label for="edit_cedula_pacientes" class="form-label">Cédula</label>
+                        <input type="text" class="form-control" id="edit_cedula_pacientes" name="cedula_pacientes" required>
+
+                        <label for="edit_fecha_nacimiento_pacientes" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="edit_fecha_nacimiento_pacientes" name="fecha_nacimiento_pacientes" required>
+
+                        <label for="edit_direccion_pacientes" class="form-label">Dirección</label>
+                        <textarea class="form-control" id="edit_direccion_pacientes" name="direccion_pacientes" required rows="3" style="resize: none;"></textarea>
+
+                        <label for="edit_email_pacientes" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit_email_pacientes" name="email_pacientes" required>
+
+                        <label for="edit_genero_pacientes_select" class="form-label">Género</label>
+                        <select class="form-select" id="edit_genero_pacientes_select" name="genero_pacientes" required>
+                            <option value="" disabled>Seleccione una opción</option>
+                            <option value="Masculino" {% if paciente.genero_pacientes == 'Masculino' %}selected{% endif %}>Masculino</option>
+                            <option value="Femenino" {% if paciente.genero_pacientes == 'Femenino' %}selected{% endif %}>Femenino</option>
+                            <option value="Otro" {% if paciente.genero_pacientes == 'Otro' %}selected{% endif %}>Otro</option>
+                        </select>
+
+                        <div class="mb-3" id="edit_genero_otro_div" style="display: {% if paciente.genero_pacientes == 'Otro' %}block{% else %}none{% endif %};">
+                            <label for="edit_genero_otro" class="form-label">Especifique el género</label>
+                            <input type="text" class="form-control" id="edit_genero_otro" name="genero_otro" value="{{ paciente.genero_pacientes }}">
+                        </div>
+
+                        <label for="edit_telefono_pacientes" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="edit_telefono_pacientes" name="telefono_pacientes" required>
+
+                        <label for="edit_emergencia_informar_pacientes" class="form-label">En caso de emergencia informar a</label>
+                        <input type="text" class="form-control" id="edit_emergencia_informar_pacientes" name="emergencia_informar_pacientes" required>
+
+                        <label for="edit_contacto_emergencia_pacientes" class="form-label">Contacto de emergencia</label>
+                        <input type="text" class="form-control" id="edit_contacto_emergencia_pacientes" name="contacto_emergencia_pacientes" required>
+
+                        <label for="edit_seguro_pacientes_select" class="form-label">Seguro médico</label>
+                        <select class="form-select" id="edit_seguro_pacientes_select" name="seguro_pacientes" required>
+                            <option value="" disabled>Seleccione una opción</option>
+                            <option value="IESS" {% if paciente.seguro_pacientes == 'IESS' %}selected{% endif %}>IESS</option>
+                            <option value="ISSPOL" {% if paciente.seguro_pacientes == 'ISSPOL' %}selected{% endif %}>ISSPOL</option>
+                            <option value="ISSFA" {% if paciente.seguro_pacientes == 'ISSFA' %}selected{% endif %}>ISSFA</option>
+                            <option value="Otro" {% if paciente.seguro_pacientes == 'Otro' %}selected{% endif %}>Otro</option>
+                        </select>
+
+                        <div class="mb-3" id="edit_seguro_otro_div" style="display: {% if paciente.seguro_pacientes == 'Otro' %}block{% else %}none{% endif %};">
+                            <label for="edit_seguro_otro" class="form-label">Especifique el seguro</label>
+                            <input type="text" class="form-control" id="edit_seguro_otro" name="seguro_otro" value="{{ paciente.seguro_pacientes }}">
+                        </div>
+
+                        <label for="edit_fk_id_admisionista" class="form-label">Admisionista</label>
+                        <input type="text" class="form-control" id="edit_fk_id_admisionista" name="fk_id_admisionista" readonly>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "plantilla_registro_cita.html" %}
+{% load static %}
+{% block title %}
+HISTORIAL CLÍNICO
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Ver Historia Clínica</h2>
+    <br>
+    <form>
+        <!-- Información General de la Cita -->
+        <div class="card">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Información General de la Atención</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Paciente:</strong> {{ paciente.nombres_pacientes }} {{ paciente.apellido_paterno_pacientes }}
+                    {{ paciente.apellido_materno_pacientes }}</p>
+                <p><strong>Cédula:</strong> {{ paciente.cedula_pacientes }}</p>
+                
+            </div>
+        </div>
+
+        <!-- Atención Médica -->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Atención Médica</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Fecha de Atención</label>
+                    <input type="date" class="form-control" value="{{ historial_clinico.fecha_atencion_historial|date:"Y-m-d" }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Hora de Atención</label>
+                    <input type="time" class="form-control" value="{{ historial_clinico.hora_atencion_historial }}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signos Vitales -->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Signos Vitales</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Presión Arterial</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.presion_arterial_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Temperatura (°C)</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.temperatura_historial|default:'' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Saturación de Oxígeno (%)</label>
+                    <input type="number" class="form-control" value="{{ historial_clinico.saturacion_oxigeno_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Frecuencia Respiratoria</label>
+                    <input type="number" class="form-control" value="{{ historial_clinico.frecuencia_respiratoria_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Peso (kg)</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.peso_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Talla (cm)</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.talla_historial }}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Síntomas -->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Síntomas</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Nombre del Síntoma</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.nombre_sintoma_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Descripción del Síntoma</label>
+                    <textarea class="form-control" rows="4" readonly>{{ historial_clinico.descripcion_sintoma_historial }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Gravedad</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.gravedad_sintoma_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Inicio del Síntoma</label>
+                    <input type="date" class="form-control" value="{{ historial_clinico.inicio_sintoma_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Duración del Síntoma (días)</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.duracion_sintoma_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Frecuencia del Síntoma</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.frecuecia_sintoma_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Síntoma</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.tipo_sintoma_historial }}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagnóstico -->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Diagnóstico</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Nombre del Diagnóstico</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.nombre_diagnostico_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea class="form-control" rows="4" readonly>{{ historial_clinico.descripcion_diagnostico_historial }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>CIE-10</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.cie10_diagnostico_historial }}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tratamiento -->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #FF3884;">
+                <h5 style="color: white;">Tratamiento</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Medicamento</label>
+                    <input type="text" class="form-control" value="{{ historial_clinico.medicamento_tratamiento_historial }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Instrucciones</label>
+                    <textarea class="form-control" rows="4" readonly>{{ historial_clinico.instrucciones_tratamiento_historial }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Inicio</label>
+                    <input type="date" class="form-control" value="{{ historial_clinico.fecha_inicio_tratamiento_historial|date:"Y-m-d" }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Fin</label>
+                    <input type="date" class="form-control" value="{{ historial_clinico.fecha_fin_tratamiento_historial|date:"Y-m-d"  }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" rows="4" readonly>{{ historial_clinico.observaciones_tratamiento_historial }}</textarea>
+                </div>
+            </div>
+        </div>
+        
+    </form>
+    <br> <br>
+</div>
+{% endblock %}

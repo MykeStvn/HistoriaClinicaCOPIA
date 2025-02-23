@@ -1,0 +1,23 @@
+{% extends "plantilla.html" %}
+{% load static %}
+{% block title %}
+GESTIÓN PACIENTES
+{% endblock %}
+
+{% block content %}
+<table id="tabla_citas_historial" class="table table-striped">
+    <thead>
+        <tr class="text-center">
+            <th>APELLIDO PATERNO</th>
+            <th>APELLIDO MATERNO</th>
+            <th>NOMBRES</th>
+            <th>CÉDULA</th>
+            <th>FECHA CITA</th>
+            <th>HORA CITA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--aqui cargo con ajax-->
+    </tbody>
+</table>
+{% endblock %}
