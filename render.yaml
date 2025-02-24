@@ -1,0 +1,27 @@
+databases:
+  - name: servidorRenacer
+    plan: starter
+    databaseName: centro_medico_db
+    user: michael
+
+services:
+  - type: web
+    plan: starter
+    name: historial_clinico
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn historial_clinico.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: servidorRenacer
+          property: externalConnectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: historial-clinico-renacer.onrender.com
+
+
+
+# set DATABASE_URL=postgresql://michael:69oedtNSipBv7Apv9bylzoLZ6Yq2WPIr@dpg-cqlpkho8fa8c73bgsbp0-a.oregon-postgres.render.com/dbcine_v7et
+#https://historial-clinico-renacer.onrender.com

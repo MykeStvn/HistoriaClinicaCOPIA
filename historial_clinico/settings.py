@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-0d@e6btez+-dpfva8cj*mc(3(dh_45wbe9$qca64b#5bqjo!x5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'historial-clinico-renacer.onrender.com').split(',')
 
 
 # Application definition
