@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-0d@e6btez+-dpfva8cj*mc(3(dh_45wbe9$qca64b#5bqjo!x5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -52,6 +53,7 @@ LOGIN_REDIRECT_URL = '/welcome/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,16 +94,21 @@ WSGI_APPLICATION = 'historial_clinico.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql', #EL ENGINE ES EL USO DE QUE BDD 
+#         'NAME': 'centro_medico_db',  # NOMBRE BDD
+#         'USER': 'postgres',  # USUARIO
+#         'PASSWORD': 'postgres',  # CONTRASEÑA
+#         'HOST': 'localhost',  # ANFITRIÓN = LOCALHOST (COMUNICACIÓN CON LA BDD)
+#         'PORT': '5432',  # PUERTO 
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql', #EL ENGINE ES EL USO DE QUE BDD 
-        'NAME': 'centro_medico_db',  # NOMBRE BDD
-        'USER': 'postgres',  # USUARIO
-        'PASSWORD': 'postgres',  # CONTRASEÑA
-        'HOST': 'localhost',  # ANFITRIÓN = LOCALHOST (COMUNICACIÓN CON LA BDD)
-        'PORT': '5432',  # PUERTO 
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'))
     }
-}
 
 
 # Password validation
@@ -139,12 +146,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR / 'historial_clinico/static')]
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'historial_clinico/static',
-]
+#VALIDACION
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+if not DEBUG:
+    STATICFILES_ROOT = os.path.join(BASE_DIR,'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

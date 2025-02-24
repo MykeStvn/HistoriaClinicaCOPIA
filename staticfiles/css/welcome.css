@@ -1,0 +1,59 @@
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f5f5f5d5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: #ff3884;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-in-out;
+}
+
+h2 {
+  font-size: 24px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  animation: bounce 1.5s infinite;
+}
+h1 {
+  color: white;
+}
+
+p {
+  font-size: 16px;
+  color: #ffffff;
+  margin-top: 10px;
+}
+
+/* Animación para el título */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animación para mostrar suavemente el contenedor */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
