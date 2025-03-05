@@ -305,16 +305,16 @@ def eliminar_paciente(request, paciente_id):
 #validación cédula ECUATORIANA
 # Función para validar el dígito verificador de la cédula
 def validar_cedula(cedula):
-    # Validar longitud
-    if len(cedula) != 10:
+    # Validar que solo contenga números y tenga 10 dígitos
+    if not cedula.isdigit() or len(cedula) != 10:
         return False
-    
+
     # Validar los dos primeros dígitos (provincia) [01-24]
     provincia = int(cedula[:2])
     if provincia < 1 or provincia > 24:
         return False
-    
-    # Validar el tercer dígito [0-5]
+
+    # Validar el tercer dígito [0-5] (cédulas de personas naturales)
     tercer_digito = int(cedula[2])
     if tercer_digito < 0 or tercer_digito > 5:
         return False
@@ -330,14 +330,13 @@ def validar_cedula(cedula):
             resultado -= 9
         suma += resultado
 
-    # Calcular la decena superior de la suma
-    decena_superior = (suma // 10 + 1) * 10
+    # Calcular el dígito verificador correctamente
+    digito_verificador = (10 - (suma % 10)) % 10
 
-    # Calcular el dígito verificador
-    digito_verificador = decena_superior - suma
-
-    # Verificar si el dígito verificador coincide con el décimo dígito
+    # Comparar con el último dígito de la cédula
     return digito_verificador == int(cedula[9])
+
+
 
 #verifico cédula INGRESAR
 @login_required
