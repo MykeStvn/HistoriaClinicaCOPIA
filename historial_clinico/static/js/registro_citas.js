@@ -66,9 +66,9 @@ $(document).ready(function () {
                         input: 'select',
                         inputOptions: {
                             'TIEMPO DE ESPERA EXCESIVO': 'TIEMPO DE ESPERA EXCESIVO',
-                            'EMERGENCIA': 'EMERGENCIA',
-                            'CALAMIDAD DOMÉSTICA': 'CALAMIDAD DOMÉSTICA',                            
-                            'OTRO MOTIVO': 'OTRO MOTIVO'
+                            'DECISIÓN PERSONAL': 'DECISIÓN PERSONAL',
+                            'SITUACIÓN PERSONAL URGENTE': 'SITUACIÓN PERSONAL URGENTE',                            
+                            'INCOMODIDAD EN LA SALA DE ESPERA': 'INCOMODIDAD EN LA SALA DE ESPERA'
                         },
                         inputPlaceholder: 'Selecciona un motivo',
                         showCancelButton: true,
