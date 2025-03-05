@@ -14,6 +14,7 @@ GESTIÓN PACIENTES
                 <h5 style="color: white;">Información General de la Atención</h5>
             </div>
             <div class="card-body">
+                <br>            
                 <p><strong>Paciente:</strong> {{ paciente.nombres_pacientes }} {{ paciente.apellido_paterno_pacientes }}
                     {{ paciente.apellido_materno_pacientes }}</p>
                 <p><strong>Cédula:</strong> {{ paciente.cedula_pacientes }}</p>
@@ -34,8 +35,8 @@ GESTIÓN PACIENTES
                 </div>
                 <div class="form-group">
                     <label for="hora_atencion_historial">Hora de Atención</label>
-                    <input type="time" class="form-control" id="hora_atencion_historial" name="hora_atencion_historial"
-                        placeholder="Seleccione la hora de atención" readonly>
+                    <input type="time" class="form-control" id="hora_atencion_historial" 
+                           name="hora_atencion_historial" value="{{ cita.hora_cita|time:'H:i' }}" readonly>
                 </div>
             </div>
         </div>
@@ -98,6 +99,7 @@ GESTIÓN PACIENTES
                     <label for="gravedad_sintoma_historial">Gravedad</label>
                     <select class="form-control" id="gravedad_sintoma_historial" name="gravedad_sintoma_historial"
                         required>
+                        <option value="" disabled selected>--Seleccione la gravedad del síntoma--</option>
                         <option value="Leve">Leve</option>
                         <option value="Moderado">Moderado</option>
                         <option value="Grave">Grave</option>

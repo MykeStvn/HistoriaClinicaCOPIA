@@ -7,7 +7,7 @@ GESTIÓN PACIENTES
 {% block content %}
   
 
-    <h1 class="text text-center">Gestión de Pacientes</h1>
+    <h1 class="text text-center">GESTIÓN DE PACIENTES</h1>
     <br>
     <div class="container mt-5">
         <!-- Sección para el botón de nuevo paciente -->
@@ -85,7 +85,8 @@ GESTIÓN PACIENTES
                                 <a href="#" 
                                     class="btn btn-sm btn-success w-100 registrar-cita" 
                                     data-paciente-id="{{pacienteTemporal.id_pacientes}}"
-                                    data-url="{% url 'admisionistas:registrar_cita' %}">
+                                    data-url="{% url 'admisionistas:registrar_cita' %}" 
+                                    title="Asignar atención médica">
                                     <i class="bi bi-calendar-plus"></i> 
                                 </a>
                             </div>

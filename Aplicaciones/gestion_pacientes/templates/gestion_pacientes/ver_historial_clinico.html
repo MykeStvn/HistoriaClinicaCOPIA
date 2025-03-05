@@ -1,4 +1,4 @@
-{% extends "plantilla_registro_cita.html" %}
+{% extends "plantilladoctores.html" %}
 {% load static %}
 {% block title %}
 HISTORIAL CLÍNICO
@@ -14,6 +14,7 @@ HISTORIAL CLÍNICO
                 <h5 style="color: white;">Información General de la Atención</h5>
             </div>
             <div class="card-body">
+                <br>
                 <p><strong>Paciente:</strong> {{ paciente.nombres_pacientes }} {{ paciente.apellido_paterno_pacientes }}
                     {{ paciente.apellido_materno_pacientes }}</p>
                 <p><strong>Cédula:</strong> {{ paciente.cedula_pacientes }}</p>

@@ -5,28 +5,53 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-
+from django.db.models import Count
 from Aplicaciones.usuarios.models import Usuarios
 from Aplicaciones.admisionistas.models import Citas, Pacientes
 from Aplicaciones.gestion_pacientes.models import HistorialClinico
 
 @login_required
 def manejo_pacientes(request):
-    if request.user.tipo_usuario != 'doctor':
-        return redirect('usuarios:login')
+    if request.user.tipo_usuario not in ['doctor', 'administrador']:
+        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es admisionista
     return render(request, 'gestion_pacientes/manejo_pacientes.html')
 
 @login_required
 def inicio_doctor(request):
-    if request.user.tipo_usuario != 'doctor':
-        return redirect('usuarios:login')
-    doctores = Usuarios.objects.filter(tipo_usuario='doctor')
-    return render(request, 'gestion_pacientes/inicio_doctor.html', {'usuarios': doctores})
+    if request.user.tipo_usuario not in ['doctor', 'administrador']:
+        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es admisionista
+    
+    # Obtener fechas del filtro (si están presentes)
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    # Convertir las fechas a objetos datetime (si están presentes)
+    if fecha_inicio and fecha_fin:
+        fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
+        fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
+    else:
+        # Si no se proporcionan fechas, usar un rango predeterminado (por ejemplo, el último mes)
+        fecha_fin = timezone.now().date()
+        fecha_inicio = fecha_fin - timezone.timedelta(days=30)
+
+    # Obtener diagnósticos más frecuentes dentro del rango de fechas
+    diagnosticos = (HistorialClinico.objects
+                   .filter(fecha_atencion_historial__range=(fecha_inicio, fecha_fin))
+                   .values('nombre_diagnostico_historial')
+                   .exclude(nombre_diagnostico_historial='')
+                   .annotate(total=Count('nombre_diagnostico_historial'))
+                   .order_by('-total')[:5])
+    
+    return render(request, 'gestion_pacientes/inicio_doctor.html', {
+        'diagnosticos': diagnosticos,
+        'fecha_inicio': fecha_inicio.strftime('%Y-%m-%d'),
+        'fecha_fin': fecha_fin.strftime('%Y-%m-%d'),
+    })
 
 @login_required
 def citas(request):
-    if request.user.tipo_usuario != 'doctor':
-        return redirect('usuarios:login')
+    if request.user.tipo_usuario not in ['doctor', 'administrador']:
+        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es admisionista
     doctores = Usuarios.objects.filter(tipo_usuario='doctor')
     return render(request, 'gestion_pacientes/citas.html', {'usuarios': doctores})
 
@@ -64,8 +89,8 @@ def cargar_citas(request):
 #registrar cita
 @login_required
 def registro_cita(request, id_cita):
-    if request.user.tipo_usuario != 'doctor':
-        return redirect('usuarios:login')
+    if request.user.tipo_usuario not in ['doctor', 'administrador']:
+        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es admisionista
 
     cita = get_object_or_404(Citas.objects.select_related('fk_id_paciente'), id_cita=id_cita)
 

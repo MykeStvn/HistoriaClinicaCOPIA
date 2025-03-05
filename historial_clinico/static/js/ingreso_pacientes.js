@@ -102,7 +102,7 @@ $(document).ready(function () {
             }
           },
           error: function () {
-            Swal.fire("Error", "Error al eliminar el paciente.", "error");
+            Swal.fire("Error", "No se pueden eliminar pacientes, que han recibido atenciones previamente!", "error");
           },
         });
       }
@@ -901,8 +901,8 @@ $(document).ready(function () {
         event.preventDefault(); // Prevenir la recarga de la página
 
         // Obtener los datos necesarios
-        const url = $(this).data('url'); // URL de la vista Django
-        const pacienteId = $(this).data('paciente-id'); // ID del paciente
+        const url = $(this).data('url');
+        const pacienteId = $(this).data('paciente-id');
 
         // Verificar si se obtuvo el ID del paciente
         if (!pacienteId) {
@@ -915,44 +915,56 @@ $(document).ready(function () {
             return;
         }
 
-        // Obtener la fecha y hora actuales
-        const fechaActual = new Date();
-        const fechaCita = fechaActual.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-        const horaCita = fechaActual.toTimeString().split(' ')[0].slice(0, 5); // Formato HH:mm
+        // Mostrar SweetAlert2 para confirmar
+        Swal.fire({
+            title: '¿Desea asignar la atención?',
+            text: "Se registrará una nueva atención para este paciente",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, asignar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Obtener la fecha y hora actuales
+                const fechaActual = new Date();
+                const fechaCita = fechaActual.toISOString().split('T')[0];
+                const horaCita = fechaActual.toTimeString().split(' ')[0].slice(0, 5);
 
-        // Enviar la solicitud AJAX
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
-                fk_id_paciente: pacienteId,
-                fecha_cita: fechaCita,
-                hora_cita: horaCita,
-                estado_cita: 'PENDIENTE', // Estado predeterminado
-            },
-            success: function (response) {
-                // Mostrar mensaje de éxito
-                Toastify({
-                    text: "Atención asignada correctamente",
-                    backgroundColor: "linear-gradient(to right, #56ab2f, #a8e063)",
-                    duration: 5000,
-                    close: true,
-                    gravity: "bottom",
-                    position: "right",
-                }).showToast();
-            },
-            error: function (xhr) {
-                // Mostrar mensaje de error
-                const error = JSON.parse(xhr.responseText).error;
-                Toastify({
-                    text: "No se puede registrar cita médica",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    duration: 5000,
-                    close: true,
-                    gravity: "bottom",
-                    position: "right",
-                }).showToast();
+                // Enviar la solicitud AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                        fk_id_paciente: pacienteId,
+                        fecha_cita: fechaCita,
+                        hora_cita: horaCita,
+                        estado_cita: 'PENDIENTE',
+                    },
+                    success: function (response) {
+                        Toastify({
+                            text: "Atención asignada correctamente",
+                            backgroundColor: "linear-gradient(to right, #56ab2f, #a8e063)",
+                            duration: 5000,
+                            close: true,
+                            gravity: "top",
+                            position: "center",
+                        }).showToast();
+                    },
+                    error: function (xhr) {
+                        const error = JSON.parse(xhr.responseText).error;
+                        Toastify({
+                            text: "No se puede registrar cita médica",
+                            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                            duration: 5000,
+                            close: true,
+                            gravity: "bottom",
+                            position: "right",
+                        }).showToast();
+                    }
+                });
             }
         });
     });

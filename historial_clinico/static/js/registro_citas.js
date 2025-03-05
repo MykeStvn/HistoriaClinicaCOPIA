@@ -59,32 +59,31 @@ $(document).ready(function () {
                         confirmButtonColor: '#ff5f6d'
                     });
                 } else {
-                    // Mostrar mensaje de confirmación antes de cancelar
+                    // Modificación aquí: Usar input select en lugar de textarea
                     Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: "¿Deseas cancelar esta atención? Debes proporcionar un motivo.",
-                        input: 'textarea',
-                        inputPlaceholder: 'Escribe el motivo de la cancelación...',
-                        icon: 'warning',
+                        title: '¿Estás seguro de cancelar esta atención?',
+                        text: "Elija el motivo por el cual el paciente no se va a atender.",
+                        input: 'select',
+                        inputOptions: {
+                            'TIEMPO DE ESPERA EXCESIVO': 'TIEMPO DE ESPERA EXCESIVO',
+                            'EMERGENCIA': 'EMERGENCIA',
+                            'CALAMIDAD DOMÉSTICA': 'CALAMIDAD DOMÉSTICA',                            
+                            'OTRO MOTIVO': 'OTRO MOTIVO'
+                        },
+                        inputPlaceholder: 'Selecciona un motivo',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
                         confirmButtonText: 'Sí, cancelar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'No cancelar',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Debes seleccionar un motivo';
+                            }
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            const motivoCancelacion = result.value.trim();
-
-                            // Verificar si el motivo está vacío
-                            if (!motivoCancelacion) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Motivo vacío',
-                                    text: 'Debes proporcionar un motivo para la cancelación.',
-                                    confirmButtonColor: '#ff5f6d'
-                                });
-                                return;
-                            }
+                            const motivoCancelacion = result.value;
 
                             // Enviar petición para cancelar la cita
                             $.ajax({

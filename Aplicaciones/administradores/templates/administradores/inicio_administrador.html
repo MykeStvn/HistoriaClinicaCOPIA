@@ -4,7 +4,162 @@
 GESTIÓN PACIENTES
 {% endblock %}
 {% block content %}
-    <h1 class="text text-center">Hola! ADMINISTRADOR  </h1>
-    <br><br><br><br><br>
-        
+    <h1 class="text-center">PANEL DE ADMINISTRADOR</h1>
+    <br>
+
+    <style>
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 15px;
+        }        
+        .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    
+    
+    <div class="container">
+        <div class="row">
+            <!-- Tarjeta de Pacientes -->
+            <div class="col-md-4">
+                <div class="card text-white shadow-lg p-3 mb-4 rounded-4" style="background-color: #FF3884;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-injured fa-3x"></i>
+                        <h3 class="mt-2">{{ total_pacientes }}</h3>
+                        <p>Pacientes Registrados</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Tarjeta de Usuarios -->
+            <div class="col-md-4">
+                <div class="card text-white shadow-lg p-3 mb-4 rounded-4" style="background-color: #00C853;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x"></i>
+                        <h3 class="mt-2">{{ total_usuarios }}</h3>
+                        <p>Usuarios Activos</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Tarjeta de Historiales -->
+            <div class="col-md-4">
+                <div class="card text-white shadow-lg p-3 mb-4 rounded-4" style="background-color: #3884FF;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-notes-medical fa-3x"></i>
+                        <h3 class="mt-2">{{ total_historiales }}</h3>
+                        <p>Historiales Clínicos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- <table class="table">
+        <thead>
+            <tr>
+                <th>Motivos de Cancelación de Atenciones</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for motivo in motivos_cancelacion %}
+                <tr>
+                    <td>{{ motivo.motivo_cancelacion }}</td>
+                    <td>{{ motivo.total }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" style="background-color: #FF3884;">
+                    <h5 class="text-white text-center">Principales Motivos de Cancelación de Atenciones</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="motivos_cancelacion" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('motivos_cancelacion').getContext('2d');
+            
+            // Obtener datos
+            var motivos = [{% for motivo in motivos_cancelacion %}'{{ motivo.motivo_cancelacion }}',{% endfor %}];
+            var totales = [{% for motivo in motivos_cancelacion %}{{ motivo.total }},{% endfor %}];
+            
+            // Colores para cada motivo
+            var coloresFondo = [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)'
+            ];
+            var coloresBorde = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ];
+    
+            // Crear un dataset por cada motivo
+            var datasets = motivos.map((motivo, index) => {
+                return {
+                    label: motivo,  // Etiqueta del motivo
+                    data: [totales[index]],  // Total de cancelaciones para este motivo
+                    backgroundColor: coloresFondo[index],  // Color de fondo
+                    borderColor: coloresBorde[index],  // Color del borde
+                    borderWidth: 1
+                };
+            });
+    
+            // Crear el gráfico
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Motivos de Cancelación'],  // Etiqueta común para el eje X
+                    datasets: datasets  // Conjuntos de datos
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Motivos de Cancelación de Atenciones'
+                        },
+                    }
+                }
+            });
+    
+            // Debug
+            console.log('Motivos:', motivos);
+            console.log('Totales:', totales);
+            console.log('Datasets:', datasets);
+        });
+    </script>
+
 {% endblock %}

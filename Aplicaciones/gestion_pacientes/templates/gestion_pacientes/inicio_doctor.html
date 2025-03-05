@@ -4,8 +4,101 @@
 GESTIÓN PACIENTES
 {% endblock %}
 {% block content %}
-<h1>Bienvenido Doctor</h1>
-<br>    
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+    }        
+    .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+</style>
+<h1 class="text-center">Bienvenido Doctor</h1>
+<div class="row">
+    <div class="col-md-12" style="height: 300px;">        
+        <h3 class="text-center mb-4">Diagnósticos más frecuentes</h3>
+        <form method="GET" class="text-center p-3 bg-light border rounded" action="{% url 'gestion_pacientes:inicio_doctor' %}">
+            <div class="row g-3 align-items-center justify-content-center">
+                <div class="col-auto">
+                    <label for="fecha_inicio" class="form-label">Fecha de inicio:</label>
+                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}">
+                </div>
+                <div class="col-auto">
+                    <label for="fecha_fin" class="form-label">Fecha de fin:</label>
+                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success mt-3">Filtrar</button>
+                </div>
+            </div>
+        </form>
+        <br>
+        <p class="text-center">Mostrando diagnósticos más frecuentes desde {{ fecha_inicio }} hasta {{ fecha_fin }}</p>           
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header" style="background-color: #FF3884;">
+                        <h5 class="text-white text-center">Diagnosticos</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="graficoDiagnosticos" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>    
+    var ctx = document.getElementById('graficoDiagnosticos').getContext('2d');
+    var diagnosticos = [];
+    var totales = [];
+    {% for diagnostico in diagnosticos %}
+        diagnosticos.push("{{ diagnostico.nombre_diagnostico_historial }}");
+        totales.push({{ diagnostico.total }});
+    {% endfor %}
+
+    // Verificar los datos en la consola del navegador
+    console.log(diagnosticos);
+    console.log(totales);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: diagnosticos,
+            datasets: [{
+                label: 'Número de casos',
+                data: totales,
+                backgroundColor: ['#96ac60', '#f59e0b', '#3b82f6', '#ef4444', '#a855f7'],
+                borderColor: ['#6b8c42', '#d97706', '#2563eb', '#dc2626', '#9333ea'],                    
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: Math.max(...totales) + 10,
+                }
+            },
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Diagnósticos más frecuentes',
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

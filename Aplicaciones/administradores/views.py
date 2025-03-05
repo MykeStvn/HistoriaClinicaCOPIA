@@ -5,7 +5,10 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 import pytz
+from Aplicaciones.admisionistas.models import Citas, Pacientes
+from Aplicaciones.gestion_pacientes.models import HistorialClinico
 from Aplicaciones.usuarios.models import Usuarios
+from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 
 @login_required
@@ -19,8 +22,19 @@ def gestion_usuarios(request):
 @login_required
 def inicio_administrador(request):
     if request.user.tipo_usuario != 'administrador':
-        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es doctor
-    return render(request, 'administradores/inicio_administrador.html')
+        return redirect('usuarios:login')  # Redirige a la página de login si el usuario no es administrador
+    
+    total_pacientes = Pacientes.objects.count()
+    total_historiales = HistorialClinico.objects.count()
+    #total de usuarios activos
+    total_usuarios = Usuarios.objects.filter(is_active=True).count()
+    
+    motivos_cancelacion = Citas.objects.values('motivo_cancelacion').annotate(
+        total=Count('motivo_cancelacion')
+    ).exclude(motivo_cancelacion='null').order_by('-total')[:3]
+    for razon in motivos_cancelacion:
+        print(razon)
+    return render(request, 'administradores/inicio_administrador.html', {'total_pacientes': total_pacientes, 'total_historiales': total_historiales, 'total_usuarios': total_usuarios, 'motivos_cancelacion': motivos_cancelacion})
 
 
 # Vista para obtener todos los datos de los usuarios
